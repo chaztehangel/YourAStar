@@ -16,11 +16,14 @@ class Node {
     }
 };
 
-var grid = [10];
+var gridWidth = 10;
+var gridLength = 10;
 
-for (let x = 0; x < 10; x++) {
-    grid[x] = [10]
-    for (let y = 0; y < 10; y++) {
+var grid = [gridWidth];
+
+for (let x = 0; x < gridWidth; x++) {
+    grid[x] = [gridLength]
+    for (let y = 0; y < gridLength; y++) {
         grid[x][y] = new Node(x, y);
     }
 }
@@ -77,7 +80,6 @@ function findPath(startNode, endNode) {
         for (let x = -1; x < 2 && !finished; x++) {
             for (let y = -1; y < 2 && !finished; y++) {
 
-                canProcess = true;
                 let nodeX = current.x + x;
                 let nodeY = current.y + y;
 
@@ -85,34 +87,32 @@ function findPath(startNode, endNode) {
                     continue;
                 }
 
-                if (nodeX >= 0 && nodeX < 10 && nodeY >= 0 && nodeY < 10) {
-
-                    if ((!diagonal && (x != 0 && y != 0)) || !grid[nodeX][nodeY].passable) {
-                        canProcess = false;
-                    }
-
-                    if (canProcess) {
-                        let node = grid[nodeX][nodeY];
-
-                        if (closedList.indexOf(node) > -1) {
-                            continue;
-                        }
-
-                        node.parent = current;
-                        node.g = current.g + 1;
-
-                        if(node === endNode){
-                            finished = true;
-                            break;
-                        }
-
-                        // using manhattan heuristic
-                        node.h = (node.x - endNode.x) + (node.y - endNode.y);
-                        node.f = node.g + node.h;
-
-                        openList.push(node);
-                    }
+                if (nodeX < 0 || nodeX >= gridWidth || nodeY < 0 || nodeY >= gridLength) {
+                    continue;
                 }
+
+                if ((!diagonal && (x != 0 && y != 0)) || !grid[nodeX][nodeY].passable) {
+                    continue;
+                }
+
+                let node = grid[nodeX][nodeY];
+                if (closedList.indexOf(node) > -1) {
+                    continue;
+                }
+
+                node.parent = current;
+                node.g = current.g + 1;
+
+                if (node === endNode) {
+                    finished = true;
+                    break;
+                }
+
+                // using manhattan heuristic
+                node.h = (node.x - endNode.x) + (node.y - endNode.y);
+                node.f = node.g + node.h;
+
+                openList.push(node);
             }
         }
     }
@@ -129,6 +129,6 @@ function findPath(startNode, endNode) {
     document.getElementById("path").innerHTML = htmlString;
 }
 
-window.onload = function(){
+window.onload = function () {
     findPath(grid[0][0], grid[9][8]);
 }
